@@ -190,7 +190,7 @@ where
     C: AsRef<[u8]>,
 {
     /// Render the map onto a buffer at pixel offset `(offset_x, offset_y)`.
-    pub fn render(&self, surface: &mut impl BufferMut<Color>, offset_x: i32, offset_y: i32) {
+    pub fn render(&self, surface: &mut (impl BufferMut<Color> + ?Sized), offset_x: i32, offset_y: i32) {
         for ty in 0..self.height {
             for tx in 0..self.width {
                 let &Tile {
