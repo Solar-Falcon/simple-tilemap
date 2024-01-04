@@ -39,7 +39,7 @@ impl Tile {
     }
 
     /// Specify tile color.
-    /// 
+    ///
     /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
     #[inline]
     pub const fn with_color(mut self, color: Color) -> Self {
@@ -48,7 +48,7 @@ impl Tile {
     }
 
     /// Set the tile's color.
-    /// 
+    ///
     /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
     #[inline]
     pub fn set_color(&mut self, color: Color) -> &mut Self {
@@ -57,7 +57,7 @@ impl Tile {
     }
 
     /// Specify that the tile is solid.
-    /// 
+    ///
     /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
     #[inline]
     pub const fn solid(mut self) -> Self {
@@ -66,7 +66,7 @@ impl Tile {
     }
 
     /// Set the tile's solidness.
-    /// 
+    ///
     /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
     #[inline]
     pub fn set_solid(&mut self, solid: bool) -> &mut Self {
@@ -75,7 +75,7 @@ impl Tile {
     }
 
     /// Specify that the tile is opaque.
-    /// 
+    ///
     /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
     #[inline]
     pub const fn opaque(mut self) -> Self {
@@ -84,7 +84,7 @@ impl Tile {
     }
 
     /// Set the tile's opacity.
-    /// 
+    ///
     /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
     #[inline]
     pub fn set_opaque(&mut self, opaque: bool) -> &mut Self {
@@ -93,7 +93,7 @@ impl Tile {
     }
 
     /// Specify the blit options.
-    /// 
+    ///
     /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
     #[inline]
     pub const fn with_blit_options(mut self, opts: BlitOptions) -> Self {
@@ -102,7 +102,7 @@ impl Tile {
     }
 
     /// Set the tile's blit options.
-    /// 
+    ///
     /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
     #[inline]
     pub fn set_blit_options(&mut self, opts: BlitOptions) -> &mut Self {
@@ -190,11 +190,19 @@ where
     C: AsRef<[u8]>,
 {
     /// Render the map onto a buffer at pixel offset `(offset_x, offset_y)`.
-    pub fn render(&self, surface: &mut (impl BufferMut<Color> + ?Sized), offset_x: i32, offset_y: i32) {
+    pub fn render(
+        &self,
+        surface: &mut (impl BufferMut<Color> + ?Sized),
+        offset_x: i32,
+        offset_y: i32,
+    ) {
         for ty in 0..self.height {
             for tx in 0..self.width {
                 let &Tile {
-                    id: tile, color, opts, ..
+                    id: tile,
+                    color,
+                    opts,
+                    ..
                 } = self.get(tx, ty);
 
                 if let Some((x, y)) = self.tileset.get_tile_pos(tile) {

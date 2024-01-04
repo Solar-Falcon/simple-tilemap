@@ -13,4 +13,4 @@ pub use rgb;
 #[doc(no_inline)]
 pub use rgb::RGBA8 as Color;
 #[doc(no_inline)]
-pub use simple_blit::{Buffer, BufferMut, BlitOptions};
+pub use simple_blit::{BlitOptions, Buffer, BufferMut};

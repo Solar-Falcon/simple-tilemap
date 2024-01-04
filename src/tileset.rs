@@ -57,11 +57,11 @@ impl TilesetOptions {
 }
 
 /// Tileset holds a collection of tiles stored as their pixel data.
-/// 
+///
 /// Currently only supports RGBA 8 bits per channel.
-/// 
+///
 /// Tiles are counted left-to-right then top-to-bottom.
-/// 
+///
 /// Generic parameter `C` is the container type, which should implement `AsRef<[u8]>`.
 /// You can use a simple `Vec<u8>`/`&[u8]` with RGBA data, `Rc<[u8]>`/`Arc<[u8]>` for cheap cloning
 /// or e.g. `image`'s [`ImageBuffer`](https://docs.rs/image/latest/image/struct.ImageBuffer.html).
@@ -77,7 +77,7 @@ pub struct Tileset<C> {
 
 impl<C> Tileset<C> {
     /// Whether `id` is a valid tile id for this tileset.
-    /// 
+    ///
     /// Basically `id < self.tile_count()`.
     #[inline]
     pub fn contains(&self, id: TileId) -> bool {
