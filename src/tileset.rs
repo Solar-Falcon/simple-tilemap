@@ -3,6 +3,7 @@ use crate::{Buffer, BufferMut, Color};
 use core::mem::size_of;
 use core::ops::{Index, IndexMut};
 use rgb::AsPixels;
+use simple_blit::{blit_with, BlitOptions};
 
 /// Id of a tile in a tileset.
 /// Tiles in a tileset are counted left-to-right then top-to-bottom.
@@ -134,6 +135,32 @@ where
             Some((x, y))
         } else {
             None
+        }
+    }
+
+    /// Render a single tile from the tileset, accounting for the key color.
+    pub fn render_tile(
+        &self,
+        surface: &mut (impl BufferMut<Color> + ?Sized),
+        id: TileId,
+        offset_x: i32,
+        offset_y: i32,
+        opts: BlitOptions,
+    ) {
+        if let Some((x, y)) = self.get_tile_pos(id) {
+            blit_with(
+                surface,
+                (offset_x, offset_y),
+                self,
+                (x as _, y as _),
+                self.opts.tile_size,
+                opts,
+                |dest, src, _| {
+                    if Some(*src) != self.opts.key_color {
+                        *dest = *src;
+                    }
+                },
+            )
         }
     }
 }
