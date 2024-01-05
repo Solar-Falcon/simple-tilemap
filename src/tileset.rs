@@ -119,7 +119,9 @@ where
         }
     }
 
-    pub(crate) fn get_tile_pos(&self, id: TileId) -> Option<(u32, u32)> {
+    /// Get the position of a tile in the tileset.
+    /// Useful if you need to render a single tile.
+    pub fn get_tile_pos(&self, id: TileId) -> Option<(u32, u32)> {
         let x = (id % self.tile_counts.0) * (self.opts.tile_size.0 + self.opts.margin.0)
             + self.opts.offset.0;
 
