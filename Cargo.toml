@@ -1,6 +1,6 @@
 [package]
 name = "simple-tilemap"
-version = "0.1.0"
+version = "0.1.1"
 description = "A simple tilemap & tileset implementation."
 authors = ["Solar-Falcon"]
 edition = "2021"
@@ -12,9 +12,9 @@ keywords = ["tilemap", "tileset", "tile"]
 [dependencies]
 fast-srgb8 = "1"
 rgb = "0.8"
-simple-blit = "0.7"
+simple-blit = "0.7.1"
 serde = { version = "1", default_features = false, features = ["derive", "alloc"], optional = true }
 
 [features]
 default = []
-serde = ["dep:serde", "rgb/serde"]
+serde = ["dep:serde", "rgb/serde", "simple-blit/serde"]
