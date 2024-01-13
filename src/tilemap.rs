@@ -9,101 +9,86 @@ use simple_blit::{blit_with, BlitOptions};
 /// Tile in a [`Tilemap`].
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Tile {
+pub struct Tile<U = ()> {
     /// Id of the tile.
     pub id: TileId,
+
     /// Color of the tile.
     /// Will be multiplied by the tile's 'original' color (the one in the tileset).
     pub color: Color,
-    /// Whether the tile is solid or not.
-    /// This isn't used in any way by this library, but can be generally useful.
-    pub solid: bool,
-    /// Whether the tile is opaque or not.
-    /// This isn't used in any way by this library, but can be generally useful.
-    pub opaque: bool,
+
     /// Blit options.
     pub opts: BlitOptions,
+
+    /// Custom user data.
+    pub user_data: U,
 }
 
-impl Tile {
+impl<U> Tile<U>
+where
+    U: Default,
+{
     /// Contruct a new tile.
     #[inline]
-    pub const fn new(id: TileId) -> Self {
+    pub fn new(id: TileId) -> Self {
         Self {
             id,
             color: Color::new(255, 255, 255, 255),
-            solid: false,
-            opaque: false,
             opts: BlitOptions::None,
+            user_data: U::default(),
         }
     }
+}
 
-    /// Specify tile color.
+impl<U> Tile<U> {
+    /// Set tile color.
     ///
     /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
     #[inline]
-    pub const fn with_color(mut self, color: Color) -> Self {
+    pub fn with_color(mut self, color: Color) -> Self {
         self.color = color;
         self
     }
 
-    /// Set the tile's color.
+    /// Set tile color.
     ///
-    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
+    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
     pub fn set_color(&mut self, color: Color) -> &mut Self {
         self.color = color;
         self
     }
 
-    /// Specify that the tile is solid.
+    /// Set tile user data.
     ///
-    /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
+    /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
-    pub const fn solid(mut self) -> Self {
-        self.solid = true;
+    pub fn with_user_data(mut self, user_data: U) -> Self {
+        self.user_data = user_data;
         self
     }
 
-    /// Set the tile's solidness.
+    /// Set tile user data.
     ///
-    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
+    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
-    pub fn set_solid(&mut self, solid: bool) -> &mut Self {
-        self.solid = solid;
-        self
-    }
-
-    /// Specify that the tile is opaque.
-    ///
-    /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
-    #[inline]
-    pub const fn opaque(mut self) -> Self {
-        self.opaque = true;
-        self
-    }
-
-    /// Set the tile's opacity.
-    ///
-    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
-    #[inline]
-    pub fn set_opaque(&mut self, opaque: bool) -> &mut Self {
-        self.opaque = opaque;
+    pub fn set_user_data(&mut self, user_data: U) -> &mut Self {
+        self.user_data = user_data;
         self
     }
 
     /// Specify the blit options.
     ///
-    /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255)).solid()` etc.
+    /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
-    pub const fn with_blit_options(mut self, opts: BlitOptions) -> Self {
+    pub fn with_blit_options(mut self, opts: BlitOptions) -> Self {
         self.opts = opts;
         self
     }
 
     /// Set the tile's blit options.
     ///
-    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255)).set_solid(false)` etc.
+    /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
     pub fn set_blit_options(&mut self, opts: BlitOptions) -> &mut Self {
         self.opts = opts;
@@ -114,14 +99,17 @@ impl Tile {
 /// A map that holds a tileset and a collection of tiles.
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct Tilemap<C> {
+pub struct Tilemap<C, U = ()> {
     tileset: Tileset<C>,
-    tiles: Vec<Tile>,
+    tiles: Vec<Tile<U>>,
     width: u32,
     height: u32,
 }
 
-impl<C> Tilemap<C> {
+impl<C, U> Tilemap<C, U>
+where
+    U: Default + Clone,
+{
     /// Construct a new tilemap.
     /// `width` and `height` are map's size in tiles.
     #[inline]
@@ -133,7 +121,9 @@ impl<C> Tilemap<C> {
             tileset,
         }
     }
+}
 
+impl<C, U> Tilemap<C, U> {
     /// Map's width in tiles.
     #[inline]
     pub fn width(&self) -> u32 {
@@ -154,31 +144,31 @@ impl<C> Tilemap<C> {
 
     /// Map's tiles.
     #[inline]
-    pub fn tiles(&self) -> &[Tile] {
+    pub fn tiles(&self) -> &[Tile<U>] {
         &self.tiles
     }
 
     /// Map's tiles (mutable).
     #[inline]
-    pub fn tiles_mut(&mut self) -> &mut [Tile] {
+    pub fn tiles_mut(&mut self) -> &mut [Tile<U>] {
         &mut self.tiles
     }
 
     /// Get a tile at (x, y).
     #[inline]
-    pub fn get_tile(&self, x: u32, y: u32) -> Option<Tile> {
-        self.tiles.get((y * self.width + x) as usize).copied()
+    pub fn get_tile(&self, x: u32, y: u32) -> Option<&Tile<U>> {
+        self.tiles.get((y * self.width + x) as usize)
     }
 
     /// Get a mutable ref to a tile at (x, y).
     #[inline]
-    pub fn get_mut_tile(&mut self, x: u32, y: u32) -> Option<&mut Tile> {
+    pub fn get_mut_tile(&mut self, x: u32, y: u32) -> Option<&mut Tile<U>> {
         self.tiles.get_mut((y * self.width + x) as usize)
     }
 
     /// Set a tile at (x, y).
     #[inline]
-    pub fn set_tile(&mut self, x: u32, y: u32, tile: Tile) {
+    pub fn set_tile(&mut self, x: u32, y: u32, tile: Tile<U>) {
         if let Some(t) = self.tiles.get_mut((y * self.width + x) as usize) {
             *t = tile;
         }

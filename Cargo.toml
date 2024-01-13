@@ -1,6 +1,6 @@
 [package]
 name = "simple-tilemap"
-version = "0.2.0"
+version = "0.3.0"
 description = "A simple tilemap & tileset implementation."
 authors = ["Solar-Falcon"]
 edition = "2021"
