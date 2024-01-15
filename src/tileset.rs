@@ -17,8 +17,8 @@ pub struct TilesetOptions {
     pub tile_size: (u32, u32),
     /// Offset (x, y) - first tile's top left corner.
     pub offset: (u32, u32),
-    /// Margin (x, y) - distance between tiles.
-    pub margin: (u32, u32),
+    /// Spacing (x, y) - distance between tiles.
+    pub spacing: (u32, u32),
     /// Key color aka mask/background color. Gets ignored when rendering the tile.
     pub key_color: Option<Color>,
 }
@@ -30,7 +30,7 @@ impl TilesetOptions {
         Self {
             tile_size: (tile_width, tile_height),
             offset: (0, 0),
-            margin: (0, 0),
+            spacing: (0, 0),
             key_color: None,
         }
     }
@@ -42,10 +42,10 @@ impl TilesetOptions {
         self
     }
 
-    /// Specify margin.
+    /// Specify spacing.
     #[inline]
     pub const fn with_margin(mut self, margin_x: u32, margin_y: u32) -> Self {
-        self.margin = (margin_x, margin_y);
+        self.spacing = (margin_x, margin_y);
         self
     }
 
@@ -123,10 +123,10 @@ where
     /// Get the position of a tile in the tileset.
     /// Useful if you need to render a single tile.
     pub fn get_tile_pos(&self, id: TileId) -> Option<(u32, u32)> {
-        let x = (id % self.tile_counts.0) * (self.opts.tile_size.0 + self.opts.margin.0)
+        let x = (id % self.tile_counts.0) * (self.opts.tile_size.0 + self.opts.spacing.0)
             + self.opts.offset.0;
 
-        let y = (id / self.tile_counts.0) * (self.opts.tile_size.1 + self.opts.margin.1)
+        let y = (id / self.tile_counts.0) * (self.opts.tile_size.1 + self.opts.spacing.1)
             + self.opts.offset.1;
 
         if (x + self.opts.tile_size.0) < self.width as _
@@ -204,7 +204,7 @@ where
 #[inline]
 const fn calc_tile_counts(width: u32, height: u32, opts: &TilesetOptions) -> (u32, u32) {
     (
-        (width - opts.offset.0 + opts.margin.0) / (opts.tile_size.0 + opts.margin.0),
-        (height - opts.offset.1 + opts.margin.1) / (opts.tile_size.1 + opts.margin.1),
+        (width - opts.offset.0 + opts.spacing.0) / (opts.tile_size.0 + opts.spacing.0),
+        (height - opts.offset.1 + opts.spacing.1) / (opts.tile_size.1 + opts.spacing.1),
     )
 }
