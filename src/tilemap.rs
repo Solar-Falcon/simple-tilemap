@@ -21,7 +21,7 @@ pub struct Tile<U = ()> {
     pub opts: BlitOptions,
 
     /// Custom user data.
-    pub user_data: U,
+    pub data: U,
 }
 
 impl<U> Tile<U>
@@ -35,7 +35,7 @@ where
             id,
             color: Color::new(255, 255, 255, 255),
             opts: BlitOptions::None,
-            user_data: U::default(),
+            data: U::default(),
         }
     }
 }
@@ -63,8 +63,8 @@ impl<U> Tile<U> {
     ///
     /// Allows for chaining tile creation like `Tile::new(4).with_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
-    pub fn with_user_data(mut self, user_data: U) -> Self {
-        self.user_data = user_data;
+    pub fn with_user_data(mut self, data: U) -> Self {
+        self.data = data;
         self
     }
 
@@ -72,8 +72,8 @@ impl<U> Tile<U> {
     ///
     /// Allows for chaining tile modifying like `tilemap.get_mut_tile(1, 1).unwrap().set_color(Color::new(255, 0, 255, 255))` etc.
     #[inline]
-    pub fn set_user_data(&mut self, user_data: U) -> &mut Self {
-        self.user_data = user_data;
+    pub fn set_user_data(&mut self, data: U) -> &mut Self {
+        self.data = data;
         self
     }
 
